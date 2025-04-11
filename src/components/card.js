@@ -1,18 +1,18 @@
-import { openImageModal } from "./modal";
-import { initialCards } from "../components/cards";
-
 const cardTemplate = document.querySelector("#card-template").content;
-export const placesList = document.querySelector(".places__list");
 
+
+// Экспортируемая функция для удаления карточки
 export function deleteCard(card) {
   card.remove();
 }
 
+// Экспортируемая функция для лайка карточки
 export function likeCard(evt) {
   evt.target.classList.toggle("card__like-button_is-active");
 }
 
-export function addCards(item, deleteCard, likeCard) {
+// Экспортируемая функция для создания карточки
+export function addCards(item, deleteCard, likeCard, openImageModal) {
   const card = cardTemplate.querySelector(".places__item").cloneNode(true);
   card.querySelector(".card__title").textContent = item.name;
   const cardImage = card.querySelector(".card__image");
@@ -31,7 +31,3 @@ export function addCards(item, deleteCard, likeCard) {
 
   return card;
 }
-
-initialCards.forEach((item) => {
-  placesList.append(addCards(item, deleteCard, likeCard));
-});

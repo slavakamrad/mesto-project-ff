@@ -14,7 +14,7 @@ module.exports = {
   devServer: {
     static: path.resolve(__dirname, "./dist"), // путь, куда "смотрит" режим разработчика
     compress: true, // это ускорит загрузку в режиме разработки
-    port: 8089, // порт, чтобы открывать сайт по адресу localhost:8089
+    port: 8088, // порт, чтобы открывать сайт по адресу localhost:8089
 
     open: true, // сайт будет открываться сам при запуске npm run dev
   },

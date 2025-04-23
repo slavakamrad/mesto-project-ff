@@ -2,7 +2,8 @@ import "./pages/index.css";
 
 import { openPopup, closePopup } from "./components/modal";
 import { addCards, likeCard, deleteCard } from "./components/card";
-import { initialCards } from "./components/cards";
+
+import { getInitialCards, getUserData } from "./components/api";
 
 const placesList = document.querySelector(".places__list");
 
@@ -27,6 +28,7 @@ const jobInput = formEditProfile.querySelector(
 );
 const profileTitle = document.querySelector(".profile__title");
 const profileDescription = document.querySelector(".profile__description");
+const profileAvatar = document.querySelector(".profile__image");
 const profileEditButton = document.querySelector(".profile__edit-button");
 const addCardButton = document.querySelector(".profile__add-button");
 
@@ -92,7 +94,39 @@ function openImagePopup(name, link) {
   openPopup(popupImage);
 }
 
-// Загрузка всех карточек, которые есть в initialCards
-initialCards.forEach((item) => {
-  placesList.append(addCards(item, deleteCard, likeCard, openImagePopup));
-});
+Promise.all([getUserData(), getInitialCards()]).then(
+  ([userData, initialCards]) => {
+    userData = { ...userData };
+    // Заполнение профиля данными о пользователе
+    profileTitle.textContent = userData.name;
+    profileDescription.textContent = userData.about;
+    profileAvatar.src = userData.avatar;
+    // Загрузка всех карточек, которые есть в API
+    initialCards.forEach((item) => {
+      placesList.append(addCards(item, deleteCard, likeCard, openImagePopup));
+    });
+  }
+).catch((err) => {
+  console.log(err)}); 
+
+// getInitialCards()
+//   .then((result) => {
+//     result.forEach((item) => {
+//       placesList.append(addCards(item, deleteCard, likeCard, openImagePopup));
+//     });
+//   })
+//   .catch((err) => {
+//     console.log(err); // выводим ошибку в консоль
+//   });
+
+// // Заполнение профиля данными о пользователе
+// getUserData()
+//   .then((result) => {
+//     console.log(result.avatar);
+//     profileTitle.textContent = result.name;
+//     profileDescription.textContent = result.about;
+//     profileAvatar.src = result.avatar;
+//   })
+//   .catch((err) => {
+//     console.log(err); // выводим ошибку в консоль
+//   });

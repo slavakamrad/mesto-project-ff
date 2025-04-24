@@ -3,7 +3,12 @@ import "./pages/index.css";
 import { openPopup, closePopup } from "./components/modal";
 import { addCards, likeCard, deleteCard } from "./components/card";
 
-import { getInitialCards, getUserData } from "./components/api";
+import {
+  getInitialCards,
+  getUserData,
+  addUserData,
+  addNewCard,
+} from "./components/api";
 
 const placesList = document.querySelector(".places__list");
 
@@ -68,22 +73,35 @@ addCardButton.addEventListener("click", () => {
 // EventListener для отправки формы редактирования профиля
 formEditProfile.addEventListener("submit", (evt) => {
   evt.preventDefault();
-  profileTitle.textContent = nameInput.value;
-  profileDescription.textContent = jobInput.value;
-  closePopup(popupEditprofile);
+  addUserData(nameInput.value, jobInput.value)
+    .then((userData) => {
+      profileTitle.textContent = userData.name;
+      profileDescription.textContent = userData.about;
+      closePopup(popupEditprofile);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 });
 
 // EventListener для отправка формы добавления карточки
 formAddCard.addEventListener("submit", (evt) => {
   evt.preventDefault();
+
   const item = {
     name: cardName.value,
     link: cardLink.value,
   };
-  const card = addCards(item, deleteCard, likeCard, openImagePopup);
-  placesList.prepend(card);
-  formAddCard.reset();
-  closePopup(popupAddCard);
+  addNewCard(item.name, item.link)
+    .then((item) => {
+      const card = addCards(item, deleteCard, likeCard, openImagePopup);
+      placesList.prepend(card);
+      formAddCard.reset();
+      closePopup(popupAddCard);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 });
 
 // Функция открытия попапа с изображением
@@ -94,9 +112,10 @@ function openImagePopup(name, link) {
   openPopup(popupImage);
 }
 
-Promise.all([getUserData(), getInitialCards()]).then(
-  ([userData, initialCards]) => {
+Promise.all([getUserData(), getInitialCards()])
+  .then(([userData, initialCards]) => {
     userData = { ...userData };
+    console.log(userData, initialCards);
     // Заполнение профиля данными о пользователе
     profileTitle.textContent = userData.name;
     profileDescription.textContent = userData.about;
@@ -105,28 +124,7 @@ Promise.all([getUserData(), getInitialCards()]).then(
     initialCards.forEach((item) => {
       placesList.append(addCards(item, deleteCard, likeCard, openImagePopup));
     });
-  }
-).catch((err) => {
-  console.log(err)}); 
-
-// getInitialCards()
-//   .then((result) => {
-//     result.forEach((item) => {
-//       placesList.append(addCards(item, deleteCard, likeCard, openImagePopup));
-//     });
-//   })
-//   .catch((err) => {
-//     console.log(err); // выводим ошибку в консоль
-//   });
-
-// // Заполнение профиля данными о пользователе
-// getUserData()
-//   .then((result) => {
-//     console.log(result.avatar);
-//     profileTitle.textContent = result.name;
-//     profileDescription.textContent = result.about;
-//     profileAvatar.src = result.avatar;
-//   })
-//   .catch((err) => {
-//     console.log(err); // выводим ошибку в консоль
-//   });
+  })
+  .catch((err) => {
+    console.log(err);
+  });

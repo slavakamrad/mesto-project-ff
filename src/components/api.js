@@ -31,3 +31,32 @@ export const getUserData = () => {
     return Promise.reject(`Ошибка: ${res.status}`);
   });
 };
+
+
+// Экспортируемая функция обновления данных о пользователе в API
+export const addUserData = (name, about) => {
+  return fetch(`${config.baseUrl}/users/me`, {
+    method: "PATCH",
+    headers: config.headers,
+    body: JSON.stringify({ name, about }),
+  }).then((res) => {
+    if (res.ok) {
+      return res.json();
+    }
+    return Promise.reject(`Ошибка: ${res.status}`);
+  });
+};
+
+// Экспортируемая функция добавления новой карточки в API
+export const addNewCard = (name, link) => {
+  return fetch(`${config.baseUrl}/cards`, {
+    method: "POST",
+    headers: config.headers,
+    body: JSON.stringify({ name, link }),
+  }).then((res) => {
+    if (res.ok) {
+      return res.json();
+    }
+    return Promise.reject(`Ошибка: ${res.status}`);
+  });
+};

@@ -35,7 +35,9 @@ const profileTitle = document.querySelector(".profile__title");
 const profileDescription = document.querySelector(".profile__description");
 const profileAvatar = document.querySelector(".profile__avatar");
 const profileEditButton = document.querySelector(".profile__edit-button");
+const popupUpdateAvatar = document.querySelector(".popup_type_new-avatar")
 const addCardButton = document.querySelector(".profile__add-button");
+const avatarUpdateButton = document.querySelector(".profile__update-avatar")
 
 nameInput.value = profileTitle.textContent;
 jobInput.value = profileDescription.textContent;
@@ -51,6 +53,12 @@ closePopupButtons.forEach((button) => {
 });
 
 // EventListener открытия попапа редактирования профиля
+avatarUpdateButton.addEventListener("click", () => {
+  
+  openPopup(popupUpdateAvatar);
+});
+
+// EventListener открытия попапа обновления аватара
 profileEditButton.addEventListener("click", () => {
   nameInput.value = profileTitle.textContent;
   jobInput.value = profileDescription.textContent;
@@ -113,6 +121,14 @@ function openImagePopup(name, link) {
   imageCaption.textContent = name;
   openPopup(popupImage);
 }
+
+// Функция открытия попапа обновления аватара
+// function openAvatarPopup(name, link) {
+//   picturePopupImage.src = link;
+//   picturePopupImage.alt = name;
+//   imageCaption.textContent = name;
+//   openPopup(popupImage);
+// }
 
 Promise.all([getUserData(), getInitialCards()])
   .then(([userData, initialCards]) => {

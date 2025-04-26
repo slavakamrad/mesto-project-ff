@@ -104,7 +104,7 @@ formAddCard.addEventListener("submit", (evt) => {
   };
   addNewCard(item.name, item.link)
     .then((item) => {
-      const card = addCards(item, deleteCard, likeCard, openImagePopup);
+      const card = addCards(item, userData, deleteCard, likeCard, openImagePopup);
       placesList.prepend(card);
       formAddCard.reset();
       closePopup(popupAddCard);
@@ -124,15 +124,15 @@ function openImagePopup(name, link) {
 
 Promise.all([getUserData(), getInitialCards()])
   .then(([userData, initialCards]) => {
-    userData = { ...userData };
-    console.log(userData, initialCards);
+    userData = { ...userData }; 
     // Заполнение профиля данными о пользователе
     profileTitle.textContent = userData.name;
     profileDescription.textContent = userData.about;
     profileAvatar.src = userData.avatar;
+  
     // Загрузка всех карточек, которые есть в API
     initialCards.forEach((item) => {
-      placesList.append(addCards(item, deleteCard, likeCard, openImagePopup));
+      placesList.append(addCards(item, userData, deleteCard, likeCard, openImagePopup));
     });
   })
   .catch((err) => {

@@ -122,14 +122,6 @@ function openImagePopup(name, link) {
   openPopup(popupImage);
 }
 
-// Функция открытия попапа обновления аватара
-// function openAvatarPopup(name, link) {
-//   picturePopupImage.src = link;
-//   picturePopupImage.alt = name;
-//   imageCaption.textContent = name;
-//   openPopup(popupImage);
-// }
-
 Promise.all([getUserData(), getInitialCards()])
   .then(([userData, initialCards]) => {
     userData = { ...userData };

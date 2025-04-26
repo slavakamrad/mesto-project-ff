@@ -33,7 +33,7 @@ const jobInput = formEditProfile.querySelector(
 );
 const profileTitle = document.querySelector(".profile__title");
 const profileDescription = document.querySelector(".profile__description");
-const profileAvatar = document.querySelector(".profile__image");
+const profileAvatar = document.querySelector(".profile__avatar");
 const profileEditButton = document.querySelector(".profile__edit-button");
 const addCardButton = document.querySelector(".profile__add-button");
 
@@ -77,6 +77,8 @@ formEditProfile.addEventListener("submit", (evt) => {
     .then((userData) => {
       profileTitle.textContent = userData.name;
       profileDescription.textContent = userData.about;
+      profileAvatar.src = userDataValue.avatar;
+
       closePopup(popupEditprofile);
     })
     .catch((err) => {

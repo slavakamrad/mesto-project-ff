@@ -7,7 +7,11 @@ import {
   getInitialCards,
   getUserData,
   addUserData,
+  updateAvatar,
   addNewCard,
+  cardDelete,
+  like,
+  dislike
 } from "./components/api";
 
 const placesList = document.querySelector(".places__list");
@@ -38,11 +42,34 @@ const profileEditButton = document.querySelector(".profile__edit-button");
 const popupUpdateAvatar = document.querySelector(".popup_type_new-avatar")
 const addCardButton = document.querySelector(".profile__add-button");
 const avatarUpdateButton = document.querySelector(".profile__update-avatar")
+const contentEditAvatar = popupUpdateAvatar.querySelector(".popup__content");
+const formEditAvatar = contentEditAvatar.querySelector(".popup__form");
+const linkInputAvatar = formEditAvatar.querySelector(".popup__input_type_url")
 
 nameInput.value = profileTitle.textContent;
 jobInput.value = profileDescription.textContent;
 
 const closePopupButtons = document.querySelectorAll(".popup__close");
+let userData;
+
+// Общий промис для получения данных одновременно о карточкавх и пользователе
+Promise.all([getUserData(), getInitialCards()])
+  .then(([allUserData, initialCards]) => {
+    userData = { ...allUserData };
+    console.log(allUserData)
+    // Заполнение профиля данными о пользователе
+    profileTitle.textContent = userData.name;
+    profileDescription.textContent = userData.about;
+    profileAvatar.src = userData.avatar;
+
+    // Загрузка всех карточек, которые есть в API
+    initialCards.forEach((item) => {
+      placesList.append(addCards(item, userData, deleteCard, likeCard, openImagePopup));
+    });
+  })
+  .catch((err) => {
+    console.log(err);
+  });
 
 // Закрытие всех модальных окон
 closePopupButtons.forEach((button) => {
@@ -52,13 +79,12 @@ closePopupButtons.forEach((button) => {
   });
 });
 
-// EventListener открытия попапа редактирования профиля
+// EventListener открытия попапа обновления аватара
 avatarUpdateButton.addEventListener("click", () => {
-  
   openPopup(popupUpdateAvatar);
 });
 
-// EventListener открытия попапа обновления аватара
+// EventListener открытия попапа редактирования профиля 
 profileEditButton.addEventListener("click", () => {
   nameInput.value = profileTitle.textContent;
   jobInput.value = profileDescription.textContent;
@@ -78,6 +104,19 @@ addCardButton.addEventListener("click", () => {
   openPopup(popupAddCard);
 });
 
+// EventListener для отправки формы нового аватара
+formEditAvatar.addEventListener("submit", (evt) => {
+  evt.preventDefault();
+
+  updateAvatar(linkInputAvatar.value)
+    .then((data) => { 
+      profileAvatar.src = data.avatar;
+      formEditAvatar.reset();
+      closePopup(popupUpdateAvatar);
+    })
+    .catch((err) => console.log(err));
+})
+
 // EventListener для отправки формы редактирования профиля
 formEditProfile.addEventListener("submit", (evt) => {
   evt.preventDefault();
@@ -85,7 +124,7 @@ formEditProfile.addEventListener("submit", (evt) => {
     .then((userData) => {
       profileTitle.textContent = userData.name;
       profileDescription.textContent = userData.about;
-      profileAvatar.src = userDataValue.avatar;
+      profileAvatar.src = userData.avatar;
 
       closePopup(popupEditprofile);
     })
@@ -122,19 +161,3 @@ function openImagePopup(name, link) {
   openPopup(popupImage);
 }
 
-Promise.all([getUserData(), getInitialCards()])
-  .then(([userData, initialCards]) => {
-    userData = { ...userData }; 
-    // Заполнение профиля данными о пользователе
-    profileTitle.textContent = userData.name;
-    profileDescription.textContent = userData.about;
-    profileAvatar.src = userData.avatar;
-  
-    // Загрузка всех карточек, которые есть в API
-    initialCards.forEach((item) => {
-      placesList.append(addCards(item, userData, deleteCard, likeCard, openImagePopup));
-    });
-  })
-  .catch((err) => {
-    console.log(err);
-  });

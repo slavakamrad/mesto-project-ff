@@ -1,9 +1,17 @@
+import { cardDelete } from './api'
 const cardTemplate = document.querySelector("#card-template").content;
 
 
 // Экспортируемая функция для удаления карточки
-export function deleteCard(card) {
-  card.remove();
+export function deleteCard(card, id) {   
+  console.log(id)
+  cardDelete(id)
+  .then(() => {
+    card.remove();
+  })
+  .catch((err) => {
+    console.log(err);
+  });
 }
 
 // Экспортируемая функция для лайка карточки
@@ -20,7 +28,7 @@ export function addCards(item, userData, deleteCard, likeCard, openImageModal) {
   cardImage.src = item.link;
   cardImage.alt = item.name;
   cardLikeCount.textContent = item.likes.length;
- 
+  console.log(item)
   const isMyCard = item.owner._id === userData._id;
   const cardDeleteButton = card.querySelector(".card__delete-button");
   if (!isMyCard) {
@@ -30,7 +38,7 @@ export function addCards(item, userData, deleteCard, likeCard, openImageModal) {
   card
     .querySelector(".card__delete-button")
     .addEventListener("click", function () {
-      deleteCard(card);
+      deleteCard(card, item._id);
     });
   cardImage.addEventListener("click", function (evt) {
     openImageModal(evt);

@@ -1,36 +1,124 @@
-// Разбейте код валидации на функции. Подробнее об этом говорится в теме «Валидация форм». 
-// Сделайте функцию enableValidation ответственной за включение валидации всех форм.
-// Пусть она принимает все нужные функциям классы и селекторы элементов как объект настроек.
-// Все необходимое про объекты вы узнали ещё в предыдущем спринте.
+// Конфигурация валидации
+export const validationConfig = {
+  formSelector: ".popup__form",
+  inputSelector: ".popup__input",
+  submitButtonSelector: ".popup__button",
+  inactiveButtonClass: "popup__button_disabled",
+  inputErrorClass: "popup__input_type_error",
+  errorClass: "popup__error_visible",
+};
 
-// включение валидации вызовом enableValidation
-// все настройки передаются при вызове
+// Открытие сообщения об ошибке валидаци
+const showInputError = (formElement, inputElement, errorMessage) => {
+  const errorElement = formElement.querySelector(
+    `.${inputElement.name}__input-error`
+  );
+  if (errorElement) {
+    inputElement.classList.add(validationConfig.inputErrorClass);
+    errorElement.textContent = errorMessage;
+    errorElement.classList.add(validationConfig.errorClass);
+  }
 
-enableValidation({
-  formSelector: '.popup__form',
-  inputSelector: '.popup__input',
-  submitButtonSelector: '.popup__button',
-  inactiveButtonClass: 'popup__button_disabled',
-  inputErrorClass: 'popup__input_type_error',
-  errorClass: 'popup__error_visible'
-});
+  console.log("Showing error for:", inputElement.name);
+  console.log("Error element:", errorElement);
+  console.log("Current classes:", errorElement.classList);
+};
 
-// очистка ошибок валидации вызовом clearValidation
+// Сокрытие сообщения об ошибке валидаци
+const hideInputError = (formElement, inputElement) => {
+  const errorElement = formElement.querySelector(
+    `.${inputElement.name}__input-error`
+  );
+  if (errorElement) {
+    inputElement.classList.remove(validationConfig.inputErrorClass);
+    errorElement.textContent = "";
+    errorElement.classList.remove(validationConfig.errorClass);
+  }
+};
 
-clearValidation(profileForm, validationConfig);
+// Проверка поля на валидность
+const checkInputValidity = (formElement, inputElement) => {
+  if (inputElement.validity.valueMissing) {
+    inputElement.setCustomValidity('Вы пропустили это поле');
+  } 
+  else if (inputElement.validity.patternMismatch) {
+    inputElement.setCustomValidity(inputElement.dataset.errorMessage);
+  } else {
+    inputElement.setCustomValidity("");
+  }
 
-// В случае, если в поля «Имя» или «Название» введён любой символ, 
-// кроме латинской буквы, кириллической буквы и дефиса, вывести кастомное сообщение об ошибке: 
-// "Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы". 
-// Текст ошибки разместить в data-* атрибуте поля ввода.
-// Создайте функцию clearValidation, которая очищает ошибки валидации формы и делает кнопку неактивной. 
-// Эта функция должна принимать как параметры DOM-элемент формы, 
-// для которой очищаются ошибки валидации и объект с настройками валидации. 
-// Используйте функцию clearValidation при заполнении формы профиля во время её открытия и 
-// при очистке формы добавления карточки.
+  if (!inputElement.validity.valid) {
+    showInputError(formElement, inputElement, inputElement.validationMessage);
+  } else {
+    hideInputError(formElement, inputElement);
+  }
+};
 
-// Вынесите функциональность валидации форм в файл validation.js.
-// Чтобы было чуточку понятнее — пример выше, вызов функций enableValidation и 
-// clearValidation должен находиться в файле index.js.А все другие функции,
-//  включая декларирование функции enableValidation и валидации форм, 
-// — в отдельном файле validation.js.
+// Проверка наличия невалидных полей
+const hasInvalidInput = (inputList) => {
+  return inputList.some((inputElement) => {
+    return !inputElement.validity.valid;
+  });
+};
+
+// Даективация кнопки отправки формы
+const toggleButtonState = (inputList, buttonElement) => {
+  if (hasInvalidInput(inputList)) {
+    buttonElement.disabled = true;
+    buttonElement.classList.add(validationConfig.inactiveButtonClass);
+  } else {
+    buttonElement.disabled = false;
+    buttonElement.classList.remove(validationConfig.inactiveButtonClass);
+  }
+};
+
+// EventListeners проверки валидации
+const setEventListeners = (formElement) => {
+  const inputList = Array.from(
+    formElement.querySelectorAll(validationConfig.inputSelector)
+  );
+  const buttonElement = formElement.querySelector(
+    validationConfig.submitButtonSelector
+  );
+
+  toggleButtonState(inputList, buttonElement);
+
+  inputList.forEach((inputElement) => {
+    inputElement.addEventListener("input", () => {
+      checkInputValidity(formElement, inputElement);
+      toggleButtonState(inputList, buttonElement);
+    });
+  });
+};
+
+// Экспортируемая функция включения валидации всех форм
+export const enableValidation = () => {
+  const formList = Array.from(
+    document.querySelectorAll(validationConfig.formSelector)
+  );
+
+  formList.forEach((formElement) => {
+    formElement.addEventListener("submit", (evt) => {
+      evt.preventDefault();
+    });
+    setEventListeners(formElement);
+  });
+};
+
+// Экспортируемая функция отключения валидации
+export const clearValidation = (formElement) => {
+  const inputList = Array.from(
+    formElement.querySelectorAll(validationConfig.inputSelector)
+  );
+  const buttonElement = formElement.querySelector(
+    validationConfig.submitButtonSelector
+  );
+
+  inputList.forEach((inputElement) => {
+    hideInputError(formElement, inputElement);
+    
+  });
+
+  buttonElement.disabled = true;
+  buttonElement.classList.add(validationConfig.inactiveButtonClass);
+};

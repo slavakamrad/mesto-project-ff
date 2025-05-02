@@ -10,8 +10,8 @@ export function deleteCard(card, id) {
   })
   .catch((err) => {
     console.log(err);
-  });
-}
+  });}
+
 
 // Экспортируемая функция для лайка карточки
 // export function likeCard(evt) {

@@ -1,6 +1,5 @@
 import "./pages/index.css";
 import { enableValidation, clearValidation } from "./components/validation";
-
 import { openPopup, closePopup } from "./components/modal";
 import { addCards, likeCard, deleteCard } from "./components/card";
 

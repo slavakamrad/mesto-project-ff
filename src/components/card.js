@@ -2,15 +2,15 @@ import { cardDelete,  like,  dislike } from './api'
 const cardTemplate = document.querySelector("#card-template").content;
 
 
-// Экспортируемая функция для удаления карточки
-export function deleteCard(card, id) {   
-  cardDelete(id)
-  .then(() => {
-    card.remove();
-  })
-  .catch((err) => {
-    console.log(err);
-  });}
+// // Экспортируемая функция для удаления карточки
+// export function deleteCard(card, id) {   
+//   cardDelete(id)
+//   .then(() => {
+//     card.remove();
+//   })
+//   .catch((err) => {
+//     console.log(err);
+//   });}
 
 
 // Экспортируемая функция для лайка карточки
@@ -62,11 +62,11 @@ export function addCards(item, userData, deleteCard, likeCard, openImageModal) {
     .addEventListener("click", function () {
       deleteCard(card, item._id);
     });
-  cardImage.addEventListener("click", function (evt) {
-    openImageModal(evt);
-  });
+
+  cardImage.addEventListener("click", () => openImageModal(cardImage.alt, cardImage.src));
 
   likeButton.addEventListener("click", (evt) => likeCard(evt, likeButton, cardLikeCount, item, userData));
+  
 
   return card;
 }

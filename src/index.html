@@ -87,7 +87,9 @@
               placeholder="Название"
               required
               data-error-message="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы"
-              minlength="2" maxlength="30" pattern="^[а-яА-ЯёЁa-zA-Z\s\-]+$"
+              minlength="2"
+              maxlength="30"
+              pattern="^[а-яА-ЯёЁa-zA-Z\s\-]+$"
             />
             <span class="place-name__input-error"></span>
             <input
@@ -137,7 +139,7 @@
       </div>
       <!-- дополнительный попап для удаления карточки -->
       <div class="popup popup_type_delete popup_is-animated">
-        <div class="popup__content">  
+        <div class="popup__content">
           <button type="button" class="popup__close"></button>
           <h3 class="popup__title">Вы уверены?</h3>
           <button type="submit" class="button popup__button">Да</button>

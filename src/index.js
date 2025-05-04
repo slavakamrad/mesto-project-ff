@@ -49,6 +49,10 @@ const popupDeleteCardContent = popupDeleteCard.querySelector(".popup__content");
 const popupDeleteCardButton =
   popupDeleteCardContent.querySelector(".popup__button");
 
+const formAddCardButton = formAddCard.querySelector(".popup__button");  
+const formEditProfileButton = formEditProfile.querySelector(".popup__button");  
+const formEditAvatarButton = formEditAvatar.querySelector(".popup__button");  
+
 let cardToDelete;
 let cardIdToDelete;
 
@@ -73,12 +77,8 @@ const validationConfig = {
 enableValidation(validationConfig);
 
 // 
-function renderLoading(form, isLoading, saveText = 'Сохранение...') {
-  const button = form.querySelector(".popup__button");
-  if (isLoading) {
-    button.textContent = saveText;
-  } 
-  
+function renderLoading(button, isLoading) {  
+  button.textContent = isLoading ? 'Сохранение...' : 'Сохранить';  
 }
 
 // Функция открытия попапа удаления карточки
@@ -136,7 +136,7 @@ closePopupButtons.forEach((button) => {
 avatarUpdateButton.addEventListener("click", () => {
   clearValidation(formEditAvatar, validationConfig);
   openPopup(popupUpdateAvatar);
-});
+});addCardButton
 
 // EventListener открытия попапа редактирования профиля
 profileEditButton.addEventListener("click", () => {
@@ -146,12 +146,6 @@ profileEditButton.addEventListener("click", () => {
   openPopup(popupEditprofile);
 });
 
-// EventListener открытия попапа картинки
-// placesList.addEventListener("click", (evt) => {
-//   const popupImg = evt.target.closest(".card__image");
-//   if (!popupImg) return;
-//   openImagePopup(popupImg.alt, popupImg.src);
-// });
 
 // EventListener для открытие попапа добавления карточки
 addCardButton.addEventListener("click", () => {
@@ -163,7 +157,7 @@ addCardButton.addEventListener("click", () => {
 // EventListener для отправки формы нового аватара
 formEditAvatar.addEventListener("submit", (evt) => {
   evt.preventDefault();
-  renderLoading(formEditAvatar, true, "Сохранение...");
+  renderLoading(formEditAvatarButton, true);
 
   updateAvatar(linkInputAvatar.value)
     .then((data) => {
@@ -175,13 +169,13 @@ formEditAvatar.addEventListener("submit", (evt) => {
     .catch((err) => {
       console.log(err);
     })
-    .finally(renderLoading(formEditAvatar, true, "Сохранение..."))
+    .finally(()=>{renderLoading(formEditAvatarButton, false)})
 });
 
 // EventListener для отправки формы редактирования профиля
 formEditProfile.addEventListener("submit", (evt) => {
   evt.preventDefault();
-  renderLoading(formEditProfile, true, "Сохранение...");
+  renderLoading(formEditProfileButton, true);
 
   addUserData(nameInput.value, jobInput.value)
     .then((userData) => {
@@ -194,14 +188,14 @@ formEditProfile.addEventListener("submit", (evt) => {
     .catch((err) => {
       console.log(err);
     })
-    .finally(renderLoading(formEditProfile, false, "Сохранение..."))
+    .finally(()=>{renderLoading(formEditProfileButton, false)})
 });
 
 // EventListener для отправки формы добавления карточки
 formAddCard.addEventListener("submit", (evt) => {
   evt.preventDefault();
-  renderLoading(formAddCard, true, "Сохранение...");
-
+  renderLoading(formAddCardButton, true);
+ 
   const item = {
     name: cardName.value,
     link: cardLink.value,
@@ -223,7 +217,7 @@ formAddCard.addEventListener("submit", (evt) => {
     .catch((err) => {
       console.log(err);
     })
-    .finally(renderLoading(formAddCard, false, "Сохранение..."))
+    .finally(()=> {renderLoading(formAddCardButton, false)})
 });
 
 // Функция открытия попапа с изображением
